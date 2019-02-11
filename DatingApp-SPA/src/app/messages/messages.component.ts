@@ -24,7 +24,7 @@ export class MessagesComponent implements OnInit {
       this.messages = data['messages'].result;
       this.pagination = data['messages'].pagination;
     });
-    console.log(this.authService.decodedToken.nameId);
+    console.log(this.authService.decodedToken.nameid);
   }
 
   loadMessages() {
@@ -35,6 +35,18 @@ export class MessagesComponent implements OnInit {
        }, error => {
          this.alertify.error(error);
        });
+  }
+
+  deleteMessage(id: number) {
+
+    this.alertify.confirm('Are you sure you want to delete this message', () => {
+      this.userService.deleteMessage(id, this.authService.decodedToken.nameid).subscribe(() => {
+        this.messages.splice(this.messages.findIndex(m => m.id === id), 1);
+        this.alertify.success('Message has been deleted');
+      }, error => {
+        this.alertify.error('Failed to to delete the message');
+      });
+    });
   }
 
   pageChanged(event: any): void {
